@@ -48,7 +48,41 @@ export default function TabsLayout() {
             <Ionicons name="people-outline" size={size} color={color} />
           ),
         }}
+
+      />
+      <Tabs.Screen
+        name="leave-requests"
+        options={{
+          title: 'Leave',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="calendar-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="settings-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="all-features"
+        options={{
+          title: 'All Features',
+          tabBarButton: () => null,
+        }}
+      />
+      <Tabs.Screen
+        name="schedule"
+        options={{
+          title: 'Schedule',
+          tabBarButton: () => null,
+        }}
       />
     </Tabs>
+
   );
 }

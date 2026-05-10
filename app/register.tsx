@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
 
 export default function RegisterScreen() {
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -16,7 +17,7 @@ export default function RegisterScreen() {
   const roles = ['Employee', 'HR', 'Admin'];
 
   const handleRegister = async () => {
-    if (!name || !email || !password || !confirmPassword) {
+    if (!firstName || !lastName || !email || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill all fields');
       return;
     }
@@ -30,7 +31,10 @@ export default function RegisterScreen() {
     }
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, {
+        displayName: `${firstName} ${lastName}|${role}`
+      });
       Alert.alert('Success! 🎉', 'Account created successfully!', [
         { text: 'OK', onPress: () => router.replace('/(tabs)/dashboard') }
       ]);
@@ -52,11 +56,20 @@ export default function RegisterScreen() {
       </View>
 
       <View style={styles.card}>
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Full Name</Text>
-          <View style={styles.inputWrapper}>
-            <Text style={styles.inputIcon}>👤</Text>
-            <TextInput style={styles.input} placeholder="John Doe" placeholderTextColor="#aaa" value={name} onChangeText={setName} />
+        <View style={styles.nameRow}>
+          <View style={[styles.inputContainer, { flex: 1, marginRight: 8 }]}>
+            <Text style={styles.inputLabel}>First Name</Text>
+            <View style={styles.inputWrapper}>
+              <Text style={styles.inputIcon}>👤</Text>
+              <TextInput style={styles.input} placeholder="Anil" placeholderTextColor="#aaa" value={firstName} onChangeText={setFirstName} />
+            </View>
+          </View>
+          <View style={[styles.inputContainer, { flex: 1 }]}>
+            <Text style={styles.inputLabel}>Last Name</Text>
+            <View style={styles.inputWrapper}>
+              <Text style={styles.inputIcon}>👤</Text>
+              <TextInput style={styles.input} placeholder="kafle" placeholderTextColor="#aaa" value={lastName} onChangeText={setLastName} />
+            </View>
           </View>
         </View>
 
@@ -118,6 +131,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 26, fontWeight: 'bold', color: '#fff' },
   subtitle: { fontSize: 14, color: '#A0C4FF', marginTop: 4 },
   card: { flex: 1, backgroundColor: '#fff', borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 28 },
+  nameRow: { flexDirection: 'row', marginBottom: 0 },
   inputContainer: { marginBottom: 16 },
   inputLabel: { fontSize: 13, fontWeight: '600', color: '#444', marginBottom: 6 },
   inputWrapper: { flexDirection: 'row', alignItems: 'center', borderWidth: 1.5, borderColor: '#e0e0e0', borderRadius: 12, paddingHorizontal: 12, backgroundColor: '#f9f9f9' },
