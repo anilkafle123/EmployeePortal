@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useRef, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../../firebaseConfig';
-import { signOut } from 'firebase/auth';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 
 const quickLinks = [
   { icon: 'newspaper-outline', label: 'Internal News', color: '#4A90D9', bg: '#EBF4FF', route: '/(tabs)/news' },
@@ -19,6 +18,7 @@ const announcements = [
 ];
 
 export default function DashboardScreen() {
+  const scrollRef = useRef<ScrollView>(null);
   const router = useRouter();
   const user = auth.currentUser;
   const email = user?.email || 'User';
@@ -27,6 +27,7 @@ export default function DashboardScreen() {
   const rolePart = fullProfile.includes('|') ? fullProfile.split('|')[1] : 'Employee';
   const displayName = namePart.toUpperCase();
   const initials = namePart.substring(0, 2).toUpperCase();
+
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Good Morning ☀️';
@@ -34,14 +35,18 @@ export default function DashboardScreen() {
     return 'Good Evening 🌙';
   };
 
-  const handleLogout = async () => {
-    await signOut(auth);
-    router.replace('/');
-  };
+  useFocusEffect(
+    useCallback(() => {
+      scrollRef.current?.scrollTo({ y: 0, animated: true });
+    }, [])
+  );
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-
+    <ScrollView
+      ref={scrollRef}
+      style={styles.container}
+      showsVerticalScrollIndicator={false}
+    >
       {/* Header with Image Background */}
       <ImageBackground
         source={require('../../assets/images/DashboardProfile.jpg')}
@@ -53,13 +58,10 @@ export default function DashboardScreen() {
             <View>
               <Text style={styles.greeting}>{getGreeting()}</Text>
               <Text style={styles.name}>{displayName} 👋</Text>
-              <Text style={styles.role}>Employee Portal -  {rolePart} </Text>
+              <Text style={styles.role}>Employee Portal  •  {rolePart}</Text>
             </View>
-            <View style={styles.headerRight}>
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>{initials}</Text>
-              </View>
-              
+            <View style={styles.avatar}>
+              <Text style={styles.avatarText}>{initials}</Text>
             </View>
           </View>
 
@@ -92,13 +94,18 @@ export default function DashboardScreen() {
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Quick Access</Text>
-          <TouchableOpacity onPress={() => router.push('/(tabs)/all-features')}>
+          <TouchableOpacity onPress={() => router.push('/(tabs)/all-features' as any)}>
             <Text style={styles.seeAll}>See all</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.grid}>
           {quickLinks.map((item, index) => (
-            <TouchableOpacity key={index} style={styles.card} activeOpacity={0.8} onPress={() => router.push(item.route as any)}>
+            <TouchableOpacity
+              key={index}
+              style={styles.card}
+              activeOpacity={0.8}
+              onPress={() => router.push(item.route as any)}
+            >
               <View style={[styles.iconBox, { backgroundColor: item.bg }]}>
                 <Ionicons name={item.icon as any} size={26} color={item.color} />
               </View>
@@ -115,11 +122,14 @@ export default function DashboardScreen() {
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Today's Schedule</Text>
-          <TouchableOpacity onPress={() => router.push('/(tabs)/schedule')}>
-  <Text style={styles.seeAll}>View all</Text>
-</TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/schedule' as any)}>
+            <Text style={styles.seeAll}>View all</Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.scheduleCard}>
+        <TouchableOpacity
+          style={styles.scheduleCard}
+          onPress={() => router.push('/schedule' as any)}
+        >
           <View style={styles.scheduleTime}>
             <Text style={styles.scheduleHour}>10:00</Text>
             <Text style={styles.scheduleAmPm}>AM</Text>
@@ -130,8 +140,11 @@ export default function DashboardScreen() {
             <Text style={styles.scheduleDesc}>Daily sync with IT team</Text>
           </View>
           <View style={[styles.scheduleDot, { backgroundColor: '#4A90D9' }]} />
-        </View>
-        <View style={styles.scheduleCard}>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.scheduleCard}
+          onPress={() => router.push('/schedule' as any)}
+        >
           <View style={styles.scheduleTime}>
             <Text style={styles.scheduleHour}>2:00</Text>
             <Text style={styles.scheduleAmPm}>PM</Text>
@@ -142,19 +155,24 @@ export default function DashboardScreen() {
             <Text style={styles.scheduleDesc}>Quarterly performance review</Text>
           </View>
           <View style={[styles.scheduleDot, { backgroundColor: '#27AE60' }]} />
-        </View>
+        </TouchableOpacity>
       </View>
 
       {/* Announcements */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Announcements</Text>
-          <TouchableOpacity onPress={() => router.push('/(tabs)/news')}>
+          <TouchableOpacity onPress={() => router.push('/(tabs)/news' as any)}>
             <Text style={styles.seeAll}>See all</Text>
           </TouchableOpacity>
         </View>
         {announcements.map((item, i) => (
-          <TouchableOpacity key={i} style={styles.announcementCard} activeOpacity={0.8} onPress={() => router.push('/(tabs)/news')}>
+          <TouchableOpacity
+            key={i}
+            style={styles.announcementCard}
+            activeOpacity={0.8}
+            onPress={() => router.push('/(tabs)/news' as any)}
+          >
             <View style={[styles.announcementIcon, { backgroundColor: item.color + '20' }]}>
               <Ionicons name={item.icon as any} size={20} color={item.color} />
             </View>
@@ -178,19 +196,11 @@ const styles = StyleSheet.create({
   header: { backgroundColor: '#1E3A5F', borderBottomLeftRadius: 32, borderBottomRightRadius: 32 },
   headerContent: { paddingHorizontal: 24, paddingTop: 56, paddingBottom: 24 },
   headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 },
-  greeting: {
-    color: '#A0C4FF',
-    fontSize: 13,
-    position: 'relative',
-    top: -55,
-    marginLeft: -20,
-
-  }, name: { color: '#fff', fontSize: 22, fontWeight: 'bold', marginTop: 2 },
+  greeting: { color: '#A0C4FF', fontSize: 13 },
+  name: { color: '#fff', fontSize: 22, fontWeight: 'bold', marginTop: 2 },
   role: { color: '#A0C4FF', fontSize: 12, marginTop: 2 },
-  headerRight: { alignItems: 'center', gap: 8 },
   avatar: { width: 48, height: 48, borderRadius: 24, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'rgba(255,255,255,0.4)' },
   avatarText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  logoutBtn: { backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 8, padding: 6 },
   statsRow: { flexDirection: 'row', backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 16, padding: 16, alignItems: 'center' },
   statCard: { flex: 1, alignItems: 'center' },
   statNumber: { color: '#fff', fontSize: 20, fontWeight: 'bold' },

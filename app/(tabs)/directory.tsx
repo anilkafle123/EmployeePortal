@@ -38,6 +38,7 @@ export default function DirectoryScreen() {
 
   return (
     <View style={styles.container}>
+
       {/* Search */}
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
@@ -58,22 +59,41 @@ export default function DirectoryScreen() {
       </View>
 
       {/* Department Filter */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll} contentContainerStyle={styles.filterRow}>
-        {departments.map(dept => (
-          <TouchableOpacity
-            key={dept}
-            style={[styles.filterBtn, filter === dept && styles.filterBtnActive]}
-            onPress={() => setFilter(dept)}
-          >
-            <Text style={[styles.filterText, filter === dept && styles.filterTextActive]}>{dept}</Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      <View style={styles.filterContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterRow}
+        >
+          {departments.map(dept => (
+            <TouchableOpacity
+              key={dept}
+              style={[styles.filterBtn, filter === dept && styles.filterBtnActive]}
+              onPress={() => setFilter(dept)}
+            >
+              <Text style={[styles.filterText, filter === dept && styles.filterTextActive]}>
+                {dept}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.list}>
-        <Text style={styles.resultCount}>{filtered.length} employee{filtered.length !== 1 ? 's' : ''} found</Text>
+      {/* Employee List */}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.list}
+      >
+        <Text style={styles.resultCount}>
+          {filtered.length} employee{filtered.length !== 1 ? 's' : ''} found
+        </Text>
         {filtered.map(emp => (
-          <TouchableOpacity key={emp.id} style={styles.card} activeOpacity={0.9} onPress={() => setSelected(emp)}>
+          <TouchableOpacity
+            key={emp.id}
+            style={styles.card}
+            activeOpacity={0.9}
+            onPress={() => setSelected(emp)}
+          >
             <View style={[styles.avatar, { backgroundColor: emp.color + '20' }]}>
               <Text style={[styles.avatarText, { color: emp.color }]}>{emp.avatar}</Text>
             </View>
@@ -158,9 +178,9 @@ const styles = StyleSheet.create({
   searchContainer: { backgroundColor: '#fff', padding: 12, borderBottomWidth: 1, borderBottomColor: '#eee' },
   searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f5f5f5', borderRadius: 12, paddingHorizontal: 12, paddingVertical: 8, gap: 8 },
   searchInput: { flex: 1, fontSize: 14, color: '#333' },
-  filterScroll: { backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#eee', maxHeight: 56 },
-  filterRow: { paddingHorizontal: 12, paddingVertical: 10, gap: 8 },
-  filterBtn: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: '#f0f0f0' },
+  filterContainer: { backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#eee' },
+  filterRow: { paddingHorizontal: 12, paddingVertical: 12, gap: 8 },
+  filterBtn: { paddingHorizontal: 18, paddingVertical: 8, borderRadius: 20, backgroundColor: '#f0f0f0' },
   filterBtnActive: { backgroundColor: '#1E3A5F' },
   filterText: { fontSize: 13, fontWeight: '600', color: '#888' },
   filterTextActive: { color: '#fff' },
