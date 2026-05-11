@@ -9,19 +9,22 @@ export default function SettingsScreen() {
   const router = useRouter();
   const user = auth.currentUser;
   const fullProfile = user?.displayName || '';
-  const namePart = fullProfile.includes('|') ? fullProfile.split('|')[0] : fullProfile || user?.email?.split('@')[0] || 'User';
-  const rolePart = fullProfile.includes('|') ? fullProfile.split('|')[1] : 'Employee';
-  const initials = namePart.substring(0, 2).toUpperCase();
-  const [notifications, setNotifications] = useState(true);
+  const parts = fullProfile.split('|');
+  const namePart = parts[0] || user?.email?.split('@')[0] || 'User';
+  const rolePart = parts[1] || 'Employee';
+  const addressPart = parts[2] || '';
+  const initials = namePart.trim().split(' ').map((n: string) => n[0]).join('').toUpperCase(); const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
 
   const handleLogout = async () => {
     Alert.alert('Logout', 'Are you sure you want to logout?', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Logout', style: 'destructive', onPress: async () => {
-        await signOut(auth);
-        router.replace('/');
-      }}
+      {
+        text: 'Logout', style: 'destructive', onPress: async () => {
+          await signOut(auth);
+          router.replace('/');
+        }
+      }
     ]);
   };
 
@@ -38,13 +41,14 @@ export default function SettingsScreen() {
         </View>
         <Text style={styles.name}>{namePart.toUpperCase()}</Text>
         <Text style={styles.email}>{user?.email}</Text>
+        {addressPart ? <Text style={styles.address}>📍 {addressPart}</Text> : null}
         <View style={styles.roleRow}>
           <View style={styles.roleBadge}>
             <Ionicons name="shield-checkmark-outline" size={11} color="#fff" />
             <Text style={styles.roleText}>{rolePart}</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.editProfileBtn}>
+        <TouchableOpacity style={styles.editProfileBtn} onPress={() => router.push('/settings-edit-profile' as any)}>
           <Ionicons name="pencil-outline" size={12} color="#1E3A5F" />
           <Text style={styles.editProfileText}>Edit Profile</Text>
         </TouchableOpacity>
@@ -155,7 +159,8 @@ const styles = StyleSheet.create({
   avatarText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
   onlineDot: { position: 'absolute', bottom: 2, right: 2, width: 12, height: 12, borderRadius: 6, backgroundColor: '#27AE60', borderWidth: 2, borderColor: '#1E3A5F' },
   name: { color: '#fff', fontSize: 16, fontWeight: 'bold', marginBottom: 2 },
-  email: { color: '#A0C4FF', fontSize: 11, marginBottom: 8 },
+  email: { color: '#A0C4FF', fontSize: 11, marginBottom: 2 },
+  address: { color: '#A0C4FF', fontSize: 12, marginTop: 2, marginBottom: 6 },
   roleRow: { flexDirection: 'row', marginBottom: 10 },
   roleBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
   roleText: { color: '#fff', fontSize: 11, fontWeight: '600' },

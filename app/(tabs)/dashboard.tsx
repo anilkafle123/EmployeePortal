@@ -26,7 +26,11 @@ export default function DashboardScreen() {
   const namePart = fullProfile.includes('|') ? fullProfile.split('|')[0] : fullProfile || email.split('@')[0];
   const rolePart = fullProfile.includes('|') ? fullProfile.split('|')[1] : 'Employee';
   const displayName = namePart.toUpperCase();
-  const initials = namePart.substring(0, 2).toUpperCase();
+  const initials = displayName
+    .split(' ')
+    .map(name => name[0])
+    .join('')
+    .toUpperCase();
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -56,9 +60,15 @@ export default function DashboardScreen() {
         <View style={styles.headerContent}>
           <View style={styles.headerTop}>
             <View>
-              <Text style={styles.greeting}>{getGreeting()}</Text>
+              <Text style={[styles.greeting, { marginBottom: 20 }]}>
+                {getGreeting()}
+              </Text>
+
               <Text style={styles.name}>{displayName} 👋</Text>
-              <Text style={styles.role}>Employee Portal  •  {rolePart}</Text>
+
+              <Text style={styles.role}>
+                Employee Portal  •  {rolePart}
+              </Text>
             </View>
             <View style={styles.avatar}>
               <Text style={styles.avatarText}>{initials}</Text>
@@ -196,8 +206,12 @@ const styles = StyleSheet.create({
   header: { backgroundColor: '#1E3A5F', borderBottomLeftRadius: 32, borderBottomRightRadius: 32 },
   headerContent: { paddingHorizontal: 24, paddingTop: 56, paddingBottom: 24 },
   headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 },
-  greeting: { color: '#A0C4FF', fontSize: 13 },
-  name: { color: '#fff', fontSize: 22, fontWeight: 'bold', marginTop: 2 },
+  greeting: {
+    color: '#A0C4FF',
+    fontSize: 13,
+    marginTop: -44,
+    marginLeft: -1,
+  }, name: { color: '#fff', fontSize: 22, fontWeight: 'bold', marginTop: 2 },
   role: { color: '#A0C4FF', fontSize: 12, marginTop: 2 },
   avatar: { width: 48, height: 48, borderRadius: 24, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'rgba(255,255,255,0.4)' },
   avatarText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },

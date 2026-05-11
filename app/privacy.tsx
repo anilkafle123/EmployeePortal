@@ -6,11 +6,11 @@ import { useRouter } from 'expo-router';
 export default function PrivacyScreen() {
   const router = useRouter();
   const items = [
-    { icon: 'lock-closed-outline', title: 'Password', desc: 'Change your account password', color: '#4A90D9' },
-    { icon: 'eye-off-outline', title: 'Profile Visibility', desc: 'Control who can see your profile', color: '#8E44AD' },
-    { icon: 'shield-outline', title: 'Two-Factor Auth', desc: 'Add extra layer of security', color: '#27AE60' },
-    { icon: 'phone-portrait-outline', title: 'Active Sessions', desc: 'Manage logged in devices', color: '#E67E22' },
-    { icon: 'trash-outline', title: 'Delete Account', desc: 'Permanently delete your account', color: '#E74C3C' },
+    { icon: 'lock-closed-outline', title: 'Password', desc: 'Change your account password', color: '#4A90D9', route: '/privacy/password' },
+    { icon: 'eye-off-outline', title: 'Profile Visibility', desc: 'Control who can see your profile', color: '#8E44AD', route: '/privacy/visibility' },
+    { icon: 'shield-outline', title: 'Two-Factor Auth', desc: 'Add extra layer of security', color: '#27AE60', route: '/privacy/two-factor' },
+    { icon: 'phone-portrait-outline', title: 'Active Sessions', desc: 'Manage logged in devices', color: '#E67E22', route: '/privacy/sessions' },
+    { icon: 'trash-outline', title: 'Delete Account', desc: 'Permanently delete your account', color: '#E74C3C', route: '/privacy/delete-account' },
   ];
 
   return (
@@ -30,7 +30,7 @@ export default function PrivacyScreen() {
         <View style={styles.menuCard}>
           {items.map((item, index) => (
             <View key={index}>
-              <TouchableOpacity style={styles.menuRow} activeOpacity={0.7}>
+              <TouchableOpacity style={styles.menuRow} activeOpacity={0.7} onPress={() => router.push(item.route as any)}>
                 <View style={[styles.menuIcon, { backgroundColor: item.color + '20' }]}>
                   <Ionicons name={item.icon as any} size={20} color={item.color} />
                 </View>
