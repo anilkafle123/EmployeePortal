@@ -10,25 +10,18 @@ export default function TabsLayout() {
         headerTitleStyle: { fontWeight: 'bold' },
         tabBarActiveTintColor: '#1E3A5F',
         tabBarInactiveTintColor: '#999',
-        tabBarStyle: { backgroundColor: '#FFFFFF', height: 65, paddingBottom: 10 },
-        tabBarLabelStyle: { fontSize: 10, fontWeight: '600' },
+        tabBarStyle: { backgroundColor: '#FFFFFF' },
       }}
     >
-     <Tabs.Screen
-  name="dashboard"
-  options={{
-    title: 'Home',
-    tabBarIcon: ({ color, size }) => (
-      <Ionicons name="home-outline" size={size} color={color} />
-    ),
-  }}
-  listeners={({ navigation }) => ({
-    tabPress: (e) => {
-      e.preventDefault();
-      navigation.navigate('dashboard');
-    },
-  })}
-/>
+      <Tabs.Screen
+        name="dashboard"
+        options={{
+          title: 'Dashboard',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home-outline" size={size} color={color} />
+          ),
+        }}
+      />
       <Tabs.Screen
         name="news"
         options={{
@@ -41,7 +34,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="documents"
         options={{
-          title: 'Docs',
+          title: 'Documents',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="document-text-outline" size={size} color={color} />
           ),
@@ -50,9 +43,18 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="directory"
         options={{
-          title: 'People',
+          title: 'Directory',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="people-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="leave-requests"
+        options={{
+          title: 'Leave',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="calendar-outline" size={size} color={color} />
           ),
         }}
       />
@@ -65,9 +67,7 @@ export default function TabsLayout() {
           ),
         }}
       />
-      <Tabs.Screen name="leave-requests" options={{ href: null }} />
       <Tabs.Screen name="all-features" options={{ href: null }} />
-      <Tabs.Screen name="schedule" options={{ href: null }} />
     </Tabs>
   );
 }

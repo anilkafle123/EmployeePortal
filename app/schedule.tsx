@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 const events = [
   { id: '1', title: 'Team Standup', time: '9:00 AM', duration: '30 min', location: 'Meeting Room A', type: 'Meeting', color: '#4A90D9', desc: 'Daily sync with the IT team. Review progress, blockers, and priorities for the day. All team members must attend.', organizer: 'Anil Kafle' },
@@ -27,12 +28,18 @@ const typeColors: Record<string, string> = {
 
 export default function ScheduleScreen() {
   const [selected, setSelected] = useState<typeof events[0] | null>(null);
-
+  const router = useRouter();
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerDate}>Today — {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</Text>
+        <View style={styles.headerTop}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+            <Ionicons name="arrow-back" size={24} color="#fff" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Today's Schedule</Text>
+        </View>
+        <Text style={styles.headerDate}>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</Text>
         <Text style={styles.headerCount}>{events.length} events scheduled</Text>
       </View>
 
@@ -143,9 +150,11 @@ export default function ScheduleScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F0F4F8' },
-  header: { backgroundColor: '#1E3A5F', padding: 20, paddingTop: 20, paddingBottom: 20 },
-  headerDate: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  headerCount: { color: '#A0C4FF', fontSize: 13, marginTop: 2 },
+  header: { backgroundColor: '#1E3A5F', padding: 20, paddingTop: 50, paddingBottom: 20 },
+  headerTop: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 6 },
+  headerDate: { color: '#A0C4FF', fontSize: 14, marginLeft: 40 },
+  headerCount: { color: '#A0C4FF', fontSize: 13, marginLeft: 40 },
+  headerTitle: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
   list: { padding: 16 },
   card: { flexDirection: 'row', marginBottom: 16 },
   timeColumn: { width: 60, alignItems: 'center', paddingTop: 4 },
